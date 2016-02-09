@@ -70,13 +70,13 @@ public class JavaClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     public JavaClientCodegen() {
         super();
-        swagger = CodegenConfigurator.swaggerToCodegen;
+
         outputFolder = "generated-code" + File.separator + "java";
         modelTemplateFiles.put("model.mustache", ".java");
         apiTemplateFiles.put("api.mustache", ".java");
         embeddedTemplateDir = templateDir = "Java";
-        apiPackage = "org.wso2."+swagger.getInfo().getTitle()+"client.api";
-        modelPackage = "org.wso2."+swagger.getInfo().getTitle()+"client.model";
+        apiPackage = "org.wso2.client.api";
+        modelPackage = "org.wso2.client.model";
 
         reservedWords = new HashSet<String>(
                 Arrays.asList(
@@ -335,7 +335,12 @@ public class JavaClientCodegen extends DefaultCodegen implements CodegenConfig {
     private void sanitizeConfig() {
         // Sanitize any config options here. We also have to update the additionalProperties because
         // the whole additionalProperties object is injected into the main object passed to the mustache layer
-
+        swagger = CodegenConfigurator.swaggerToCodegen;
+        String apiName = swagger.getInfo().getTitle().replace(" ","");
+        String apiVersion = swagger.getInfo().getVersion().replace(".","");
+        apiPackage = "org.wso2."+apiName+apiVersion+"Client.api";
+        modelPackage= "org.wso2."+apiName+apiVersion+"Client.model";
+        invokerPackage="org.wso2."+apiName+apiVersion+"Client";
         this.setApiPackage(sanitizePackageName(apiPackage));
         if (additionalProperties.containsKey(CodegenConstants.API_PACKAGE)) {
             this.additionalProperties.put(CodegenConstants.API_PACKAGE, apiPackage);
